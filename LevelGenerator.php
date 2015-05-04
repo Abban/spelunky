@@ -2,21 +2,21 @@
 
 class LevelGenerator
 {
-	public $level = array();
+    public $level = array();
 
-	private $generating;
+    private $generating;
 
-	private $earlyDropChance = 2;
-	
-	private $maxRows    = 3;
-	private $maxColumns = 3;
-	
-	private $currentRow    = 0;
-	private $currentColumn = 0;
+    private $earlyDropChance = 2;
+    
+    private $maxRows    = 3;
+    private $maxColumns = 3;
+    
+    private $currentRow    = 0;
+    private $currentColumn = 0;
 
-	private $direction;
-	private $changeRow = false;
-	private $lastDirection;
+    private $direction;
+    private $changeRow = false;
+    private $lastDirection;
 
 
     /**
@@ -26,20 +26,20 @@ class LevelGenerator
      */
     public function generateLevel()
     {
-    	$this->initLevel();
-		$this->placeStart();
+        $this->initLevel();
+        $this->placeStart();
 
-    	$this->generating = true;
-    	while($this->generating) {
+        $this->generating = true;
+        while($this->generating) {
 
-    		$moved = $this->changeRow ? $this->changeRow() : $this->move();
+            $moved = $this->changeRow ? $this->changeRow() : $this->move();
 
-    		if($moved) {
-    			$this->placeCell();
-    		}
-    	}
+            if($moved) {
+                $this->placeCell();
+            }
+        }
 
-    	return $this->level;
+        return $this->level;
     }
 
 
@@ -51,12 +51,12 @@ class LevelGenerator
      */
     private function initLevel($blank = false)
     {
-    	// Fill the array with '0' squares
-    	for($r = 0; $r <= $this->maxRows; $r++) {
-    		for($c = 0; $c <= $this->maxColumns; $c++) {
-	    		$this->level[$r][$c] = '0';
-	    	}
-    	}
+        // Fill the array with '0' squares
+        for($r = 0; $r <= $this->maxRows; $r++) {
+            for($c = 0; $c <= $this->maxColumns; $c++) {
+                $this->level[$r][$c] = '0';
+            }
+        }
     }
 
 
@@ -68,15 +68,15 @@ class LevelGenerator
      */
     private function placeStart()
     {
-    	$startPosition = mt_rand(0, $this->maxColumns);
+        $startPosition = mt_rand(0, $this->maxColumns);
 
-		$this->currentRow    = 0;
-		$this->currentColumn = $startPosition;
+        $this->currentRow    = 0;
+        $this->currentColumn = $startPosition;
 
-		$this->setCellContent('1-door');
+        $this->setCellContent('1-door');
 
-		// Set the direction for the next cell to be placed in
-		$this->setHorizontalDirection();
+        // Set the direction for the next cell to be placed in
+        $this->setHorizontalDirection();
     }
 
 
@@ -88,38 +88,38 @@ class LevelGenerator
      */
     private function placeCell()
     {
-    	$dropChance = $this->earlyDropChance == mt_rand(0, $this->earlyDropChance);
+        $dropChance = $this->earlyDropChance == mt_rand(0, $this->earlyDropChance);
 
-    	// Just dropped down and doesn't want to drop again
-    	// Or Just dropped down to bottom row
-    	if($this->lastDirection == 'Down' && (!$dropChance || !$this->canMoveDown())) {
-    		$this->changeRow = false;
-	    	$this->setCellContent(3);
+        // Just dropped down and doesn't want to drop again
+        // Or Just dropped down to bottom row
+        if($this->lastDirection == 'Down' && (!$dropChance || !$this->canMoveDown())) {
+            $this->changeRow = false;
+            $this->setCellContent(3);
 
-    	// Wanting to drop down
-    	} elseif(
-    		($this->lastDirection == 'Left' && !$this->canMoveLeft()) ||
-    	   	($this->lastDirection == 'Right' && !$this->canMoveRight()) ||
-    	    $dropChance
-    	) {
+        // Wanting to drop down
+        } elseif(
+            ($this->lastDirection == 'Left' && !$this->canMoveLeft()) ||
+            ($this->lastDirection == 'Right' && !$this->canMoveRight()) ||
+            $dropChance
+        ) {
 
-    		$this->changeRow = true;
-	    	
-	    	// Going to move down
-    		if($this->canMoveDown()) {
-	    		
-	    		// If moved down last time we need to link to the top
-	    		$this->setCellContent($this->lastDirection == 'Down' ? '2' : '2-a');
+            $this->changeRow = true;
+            
+            // Going to move down
+            if($this->canMoveDown()) {
+                
+                // If moved down last time we need to link to the top
+                $this->setCellContent($this->lastDirection == 'Down' ? '2' : '2-a');
 
-	    	// If it can't move down its on the bottom so drop a door
-    		} else {
-    			$this->setCellContent('1-door');
-    		}
+            // If it can't move down its on the bottom so drop a door
+            } else {
+                $this->setCellContent('1-door');
+            }
 
-	    // Going horizontal so just stick in a normal
-	    }  else {
-    		$this->setCellContent('1');
-    	}
+        // Going horizontal so just stick in a normal
+        }  else {
+            $this->setCellContent('1');
+        }
     }
 
 
@@ -131,13 +131,13 @@ class LevelGenerator
      */
     private function setHorizontalDirection()
     {
-    	if(!$this->canMoveRight()) {
-			$this->direction = 'Left';
-		} elseif(!$this->canMoveLeft()) {
-			$this->direction = 'Right';
-		} else {
-			$this->direction = (mt_rand(0, 1)) ? 'Left' : 'Right';
-		}
+        if(!$this->canMoveRight()) {
+            $this->direction = 'Left';
+        } elseif(!$this->canMoveLeft()) {
+            $this->direction = 'Right';
+        } else {
+            $this->direction = (mt_rand(0, 1)) ? 'Left' : 'Right';
+        }
     }
 
 
@@ -149,7 +149,7 @@ class LevelGenerator
      */
     private function setCellContent($content)
     {
-		$this->level[$this->currentRow][$this->currentColumn] = $content;
+        $this->level[$this->currentRow][$this->currentColumn] = $content;
     }
 
 
@@ -160,7 +160,7 @@ class LevelGenerator
      */
     private function move()
     {
-    	return $this->{'move'.$this->direction}();
+        return $this->{'move'.$this->direction}();
     }
 
 
@@ -172,12 +172,12 @@ class LevelGenerator
      */
     private function moveLeft()
     {
-    	if($this->canMoveLeft()) {
-			$this->currentColumn--;
-			$this->lastDirection = 'Left';
-			return true;
-    	}
-    	return false;
+        if($this->canMoveLeft()) {
+            $this->currentColumn--;
+            $this->lastDirection = 'Left';
+            return true;
+        }
+        return false;
     }
 
 
@@ -189,12 +189,12 @@ class LevelGenerator
      */
     private function moveRight()
     {
-    	if($this->canMoveRight()) {
-    		$this->currentColumn++;
-    		$this->lastDirection = 'Right';
-    		return true;
-    	}
-    	return false;
+        if($this->canMoveRight()) {
+            $this->currentColumn++;
+            $this->lastDirection = 'Right';
+            return true;
+        }
+        return false;
     }
 
 
@@ -206,13 +206,13 @@ class LevelGenerator
      */
     private function changeRow()
     {
-    	if($this->canMoveDown()) {
-    		$this->currentRow++;
-    		$this->lastDirection = 'Down';
-    		$this->setHorizontalDirection();
-    		return true;
-    	}
-    	return $this->generating = false;
+        if($this->canMoveDown()) {
+            $this->currentRow++;
+            $this->lastDirection = 'Down';
+            $this->setHorizontalDirection();
+            return true;
+        }
+        return $this->generating = false;
     }
 
 
@@ -224,7 +224,7 @@ class LevelGenerator
      */
     private function canMoveLeft()
     {
-    	return $this->currentColumn > 0;
+        return $this->currentColumn > 0;
     }
 
 
@@ -236,7 +236,7 @@ class LevelGenerator
      */
     private function canMoveRight()
     {
-    	return $this->currentColumn < $this->maxColumns;
+        return $this->currentColumn < $this->maxColumns;
     }
 
 
@@ -248,6 +248,6 @@ class LevelGenerator
      */
     private function canMoveDown()
     {
-    	return $this->currentRow < $this->maxRows;
+        return $this->currentRow < $this->maxRows;
     }
 }
